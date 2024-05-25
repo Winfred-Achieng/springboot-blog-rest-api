@@ -1,5 +1,6 @@
 package com.winfred.springbootblog.service.impl;
 
+import com.winfred.springbootblog.exception.ResourceNotFoundException;
 import com.winfred.springbootblog.model.Post;
 import com.winfred.springbootblog.payload.PostDto;
 import com.winfred.springbootblog.repository.PostRepository;
@@ -7,6 +8,7 @@ import com.winfred.springbootblog.service.PostService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,7 +44,37 @@ public class PostServiceImpl implements PostService {
 
     }
 
+    @Override
+    public PostDto getPostById(long id) {
 
+        Post post = postRepository.findById(id).orElseThrow( () ->new ResourceNotFoundException("Post", "id", id));
+
+        return mapToDto(post);
+    }
+
+    @Override
+    public PostDto updatePost(PostDto postDto, long id) {
+       Optional<Post> existingPost = Optional.ofNullable(postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id)));
+
+       Post updatingPost = existingPost.get();
+       updatingPost.setTitle(postDto.getTitle());
+       updatingPost.setContent(postDto.getContent());
+       updatingPost.setDescription(postDto.getDescription());
+
+       Post  updatedPost = postRepository.save(updatingPost);
+
+
+       return mapToDto(updatedPost);
+    }
+
+    @Override
+    public void deletePostById(long id) {
+
+        Post post = postRepository.findById(id).orElseThrow( () ->new ResourceNotFoundException("Post", "id", id));
+
+        postRepository.delete(post);
+
+    }
 
 
     // converting DTO to entity
