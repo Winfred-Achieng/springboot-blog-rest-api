@@ -25,8 +25,13 @@ public class CommentController {
     }
 
     @GetMapping("/posts/{postId}/comments")
-    public ResponseEntity<List<CommentDto>> getAllComments (@PathVariable(value = "postId")long postId){
+    public ResponseEntity<List<CommentDto>> getAllCommentsByPostId (@PathVariable(value = "postId")long postId){
 
         return new ResponseEntity<>(commentService.getCommentsByPostId(postId),HttpStatus.OK);
+    }
+
+    @GetMapping("/posts/{postId}/comments/{id}")
+    public ResponseEntity<CommentDto> getCommentById(@PathVariable(value = "postId")long postId, @PathVariable(value = "id")long commentId){
+        return new ResponseEntity<>(commentService.getCommentById(postId, commentId),HttpStatus.OK);
     }
 }

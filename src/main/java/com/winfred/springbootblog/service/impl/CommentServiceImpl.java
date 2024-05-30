@@ -1,6 +1,7 @@
 package com.winfred.springbootblog.service.impl;
 
 
+import com.winfred.springbootblog.exception.BlogApiException;
 import com.winfred.springbootblog.exception.ResourceNotFoundException;
 import com.winfred.springbootblog.model.Comment;
 import com.winfred.springbootblog.model.Post;
@@ -8,6 +9,7 @@ import com.winfred.springbootblog.payload.CommentDto;
 import com.winfred.springbootblog.repository.CommentRepository;
 import com.winfred.springbootblog.repository.PostRepository;
 import com.winfred.springbootblog.service.CommentService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -46,6 +48,22 @@ public class CommentServiceImpl implements CommentService {
 
         //convert list of comment entities to list of comment dto's
         return comments.stream().map(comment ->mapToDto(comment)).collect(Collectors.toList());
+    }
+
+    @Override
+    public CommentDto getCommentById(long postId, long commentId) {
+        //retrieve post entity by id
+       Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
+
+       //retrieve comment by id
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
+
+        if (!comment.getPost().getId().equals(post.getId())) {
+
+            throw new BlogApiException(HttpStatus.BAD_REQUEST," comment does not belong to a post");
+        }
+
+        return mapToDto(comment);
     }
 
 
