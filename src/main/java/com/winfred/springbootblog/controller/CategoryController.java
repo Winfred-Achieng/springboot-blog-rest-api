@@ -5,10 +5,9 @@ import com.winfred.springbootblog.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/categories")
@@ -27,4 +26,40 @@ public class CategoryController {
 
         return new ResponseEntity<>(category, HttpStatus.CREATED);
     }
+
+    @GetMapping("{id}")
+    public ResponseEntity<CategoryDto> getCategory(@PathVariable(name = "id") Long id){
+
+        CategoryDto category = categoryService.getCategory(id);
+
+        return new ResponseEntity<>(category, HttpStatus.OK);
+
+    }
+
+    @GetMapping
+    public ResponseEntity<List<CategoryDto>> getAllCategories(){
+
+        List<CategoryDto> categoryDtoList = categoryService.getAllCategories();
+
+        return ResponseEntity.ok(categoryDtoList);
+    }
+
+    @PutMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<CategoryDto> updateCategory(@RequestBody CategoryDto categoryDto, @PathVariable(name = "id") Long categoryId){
+        CategoryDto category = categoryService.updateCategory(categoryDto, categoryId);
+
+        return new ResponseEntity<>(category, HttpStatus.OK);
+    }
+
+    @DeleteMapping("{id}")
+
+    public ResponseEntity<String> deleteCategory(@PathVariable(name = "id") Long id){
+        categoryService.deleteCategory(id);
+
+        return new ResponseEntity<>("Category Deleted", HttpStatus.OK);
+
+    }
+
+
 }
