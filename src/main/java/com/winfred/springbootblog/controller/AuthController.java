@@ -1,5 +1,6 @@
 package com.winfred.springbootblog.controller;
 
+import com.winfred.springbootblog.payload.JwtAuthResponse;
 import com.winfred.springbootblog.payload.LoginDto;
 import com.winfred.springbootblog.payload.RegisterDto;
 import com.winfred.springbootblog.service.AuthService;
@@ -22,10 +23,13 @@ public class AuthController {
 
     //login REST API
     @PostMapping(value = {"/login","/signin"})
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
-        String response =authService.login(loginDto);
+    public ResponseEntity<JwtAuthResponse> login(@RequestBody LoginDto loginDto) {
+        String token =authService.login(loginDto);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
+        jwtAuthResponse.setAccessToken(token);
+
+        return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
     }
 
     //register REST API

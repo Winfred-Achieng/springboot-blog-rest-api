@@ -7,6 +7,7 @@ import com.winfred.springbootblog.payload.LoginDto;
 import com.winfred.springbootblog.payload.RegisterDto;
 import com.winfred.springbootblog.repository.RoleRepository;
 import com.winfred.springbootblog.repository.UserRepository;
+import com.winfred.springbootblog.security.JwtTokenProvider;
 import com.winfred.springbootblog.service.AuthService;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
@@ -27,12 +28,14 @@ public class AuthServiceImpl implements AuthService {
    private UserRepository userRepository;
    private RoleRepository roleRepository;
    private PasswordEncoder passwordEncoder;
+   private JwtTokenProvider jwtTokenProvider;
 
-    public AuthServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+    public AuthServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
@@ -42,7 +45,9 @@ public class AuthServiceImpl implements AuthService {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return "User logged in successfully";
+        String token = jwtTokenProvider.generateToken(authentication);
+
+        return token;
     }
 
 
