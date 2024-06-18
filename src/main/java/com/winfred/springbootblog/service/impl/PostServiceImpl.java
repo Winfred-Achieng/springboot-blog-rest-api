@@ -94,10 +94,14 @@ public class PostServiceImpl implements PostService {
     public PostDto updatePost(PostDto postDto, long id) {
        Optional<Post> existingPost = Optional.ofNullable(postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id)));
 
+       Category category = categoryRepository.findById(postDto.getCategoryId()).orElseThrow(() -> new ResourceNotFoundException("Category","id", postDto.getCategoryId()));
+
        Post updatingPost = existingPost.get();
        updatingPost.setTitle(postDto.getTitle());
        updatingPost.setContent(postDto.getContent());
        updatingPost.setDescription(postDto.getDescription());
+
+       updatingPost.setCategory(category);
 
        Post  updatedPost = postRepository.save(updatingPost);
 
