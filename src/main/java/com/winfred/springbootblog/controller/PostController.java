@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/posts")
+@RequestMapping
 @Tag( name ="CRUD REST APIs for Post Resources " )
 
 public class PostController {
@@ -64,19 +64,23 @@ public class PostController {
     }
 
 
+
+
     @Operation( summary = "Get Post By Id REST API",
             description = "Get Post By Id REST API is used to get single post from the database")
 
     @ApiResponse(responseCode = "200",
             description = "Http Status 2010 SUCCESS")
 
-    @GetMapping("/api/v1/posts/{id}")
+    @GetMapping(value = "/api/posts/{id}", params = "version=1")
     public ResponseEntity<PostDto> getPostByIdV1(@PathVariable(name = "id") Long id){
 
         return new ResponseEntity<>(postService.getPostById(id),HttpStatus.OK);
     }
 
-    @GetMapping("/api/v2/posts/{id}")
+
+
+    @GetMapping(value = "/api/posts/{id}", params = "version=2")
     public ResponseEntity<PostDtoV2> getPostByIdV2(@PathVariable(name = "id") Long id){
 
         PostDto postDto = postService.getPostById(id);
