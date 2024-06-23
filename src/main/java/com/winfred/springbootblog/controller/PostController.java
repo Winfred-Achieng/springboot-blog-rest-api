@@ -2,13 +2,11 @@ package com.winfred.springbootblog.controller;
 
 
 import com.winfred.springbootblog.payload.PostDto;
-import com.winfred.springbootblog.payload.PostDtoV2;
 import com.winfred.springbootblog.payload.PostResponse;
 import com.winfred.springbootblog.service.PostService;
 import com.winfred.springbootblog.utils.AppConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -17,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -72,33 +69,11 @@ public class PostController {
     @ApiResponse(responseCode = "200",
             description = "Http Status 2010 SUCCESS")
 
-    @GetMapping(value = "/api/posts/{id}",produces = "application/vnd.winfredguides.v1+json")
-    public ResponseEntity<PostDto> getPostByIdV1(@PathVariable(name = "id") Long id){
+    @GetMapping(value = "/api/v1/posts/{id}")
+    public ResponseEntity<PostDto> getPostById(@PathVariable(name = "id") Long id){
 
         return new ResponseEntity<>(postService.getPostById(id),HttpStatus.OK);
     }
-
-
-
-    @GetMapping(value = "/api/posts/{id}", produces = "application/vnd.winfredguides.v2+json")
-    public ResponseEntity<PostDtoV2> getPostByIdV2(@PathVariable(name = "id") Long id){
-
-        PostDto postDto = postService.getPostById(id);
-        PostDtoV2 postDtoV2 = new PostDtoV2();
-        postDtoV2.setId(id);
-        postDtoV2.setTitle(postDto.getTitle());
-        postDtoV2.setDescription(postDto.getDescription());
-        postDtoV2.setContent(postDto.getContent());
-
-        List<String> tags = new ArrayList<>();
-        tags.add("Java");
-        tags.add("Spring Boot");
-        tags.add("AWS");
-        postDtoV2.setTags(tags);
-
-        return new ResponseEntity<>(postDtoV2,HttpStatus.OK);
-    }
-
 
 
 
